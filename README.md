@@ -37,8 +37,8 @@ json
 ```Open client/index.html in browser```
 
 # Deployment
-Backend: https://your-app.onrender.com
-Frontend: https://your-app.vercel.app
+Backend: https://bfhl-api-hlvb.onrender.com
+Frontend: https://bfhl-solution.vercel.app
 
 # Sample Test Input
 A->B,A->B,A->C,X->Y,Y->Z,Z->X,hello,A->
