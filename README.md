@@ -45,6 +45,5 @@ Frontend: https://bfhl-solution.vercel.app
 # Sample Test Input
 A->B,A->B,A->C,X->Y,Y->Z,Z->X,hello,A->
 
-Update your detailsReplace:- `yourname_ddmmyyyy`- `your@email.com`- `your-username`- deployment URLs (after deploying)
 
 
