@@ -96,7 +96,7 @@ async function submitData() {
     output.innerHTML = "Loading...";
 
     try {
-        const res = await fetch("http://localhost:3000/bfhl", {
+        const res = await fetch("https://bfhl-api-hlvb.onrender.com/bfhl", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -164,7 +164,8 @@ async function submitData() {
         }
 
     } catch (err) {
-        output.innerHTML = "<p class='error'>Error connecting to API</p>";
+    console.error("ERROR:", err);
+    output.innerHTML = "<p class='error'>Error: " + err.message + "</p>";
     }
 }
 </script>
