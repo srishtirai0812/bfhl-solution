@@ -10,21 +10,22 @@ A full-stack application that processes hierarchical node relationships and visu
 ### POST `/bfhl`
 
 # Request:
-json
+```json
 {
   "data": ["A->B", "A->C", "B->D"]
 }
-
+```
 # Response:
-{
-  "user_id": "yourname_ddmmyyyy",
-  "email_id": "your@email.com",
-  "college_roll_number": "your_roll",
+```{
+  "user_id": "srishtirai_12082004",
+  "email_id": "srishtirai0402@gmail.com",
+  "college_roll_number": "RA2311003020318",
   "hierarchies": [...],
   "invalid_entries": [],
   "duplicate_edges": [],
   "summary": {...}
 }
+```
 
 # Local Setup
 1. Clone repo
