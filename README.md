@@ -16,7 +16,8 @@ A full-stack application that processes hierarchical node relationships and visu
 }
 ```
 # Response:
-```{
+```
+{
   "user_id": "srishtirai_12082004",
   "email_id": "srishtirai0402@gmail.com",
   "college_roll_number": "RA2311003020318",
