@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>BFHL Visualizer</title>
+
+    <style>
+        body {
+            font-family: Arial;
+            padding: 20px;
+            background: #f5f7fb;
+        }
+
+        h1 {
+            color: #2c3e50;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 10px;
+            font-size: 14px;
+        }
+
+        button {
+            padding: 10px 20px;
+            margin-top: 10px;
+            background: #3498db;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        .card {
+            background: white;
+            padding: 15px;
+            margin-top: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+
+        .error {
+            color: red;
+        }
+
+        .duplicate {
+            color: orange;
+        }
+
+        ul {
+            list-style-type: none;
+            padding-left: 20px;
+        }
+
+        li::before {
+            content: "→ ";
+            color: #3498db;
+        }
+    </style>
+</head>
+
+<body>
+
+<h1>BFHL Hierarchy Visualizer</h1>
+
+<textarea id="input" rows="5">
+A->B,A->C,B->D
+</textarea>
+
+<br>
+<button onclick="submitData()">Analyze</button>
+
+<div id="output"></div>
+
+<script>
+function renderTree(obj) {
+    const ul = document.createElement("ul");
+
+    for (let key in obj) {
+        const li = document.createElement("li");
+        li.textContent = key;
+
+        if (Object.keys(obj[key]).length > 0) {
+            li.appendChild(renderTree(obj[key]));
+        }
+
+        ul.appendChild(li);
+    }
+
+    return ul;
+}
+
+async function submitData() {
+    const raw = document.getElementById("input").value;
+    const data = raw.split(",");
+
+    const output = document.getElementById("output");
+    output.innerHTML = "Loading...";
+
+    try {
+        const res = await fetch("http://localhost:3000/bfhl", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ data })
+        });
+
+        const result = await res.json();
+
+        output.innerHTML = "";
+
+        // 👤 USER INFO CARD (ADDED)
+        const userCard = document.createElement("div");
+        userCard.className = "card";
+        userCard.innerHTML = `
+            <h3>👤 User Info</h3>
+            Name ID: ${result.user_id} <br>
+            Email: ${result.email_id} <br>
+            Roll No: ${result.college_roll_number}
+        `;
+        output.appendChild(userCard);
+
+        // SUMMARY
+        const summaryCard = document.createElement("div");
+        summaryCard.className = "card";
+        summaryCard.innerHTML = `
+            <h3>📊 Summary</h3>
+            Trees: ${result.summary.total_trees} <br>
+            Cycles: ${result.summary.total_cycles} <br>
+            Largest Root: ${result.summary.largest_tree_root}
+        `;
+        output.appendChild(summaryCard);
+
+        // HIERARCHIES
+        result.hierarchies.forEach(h => {
+            const card = document.createElement("div");
+            card.className = "card";
+
+            card.innerHTML = `<h3>Root: ${h.root}</h3>`;
+
+            if (h.has_cycle) {
+                card.innerHTML += `<p class="error">⚠ Cycle detected</p>`;
+            } else {
+                card.appendChild(renderTree(h.tree));
+                card.innerHTML += `<p>Depth: ${h.depth}</p>`;
+            }
+
+            output.appendChild(card);
+        });
+
+        // INVALID
+        if (result.invalid_entries.length) {
+            const invalid = document.createElement("div");
+            invalid.className = "card error";
+            invalid.innerHTML = `<h3>Invalid Entries</h3> ${result.invalid_entries.join(", ")}`;
+            output.appendChild(invalid);
+        }
+
+        // DUPLICATES
+        if (result.duplicate_edges.length) {
+            const dup = document.createElement("div");
+            dup.className = "card duplicate";
+            dup.innerHTML = `<h3>Duplicate Edges</h3> ${result.duplicate_edges.join(", ")}`;
+            output.appendChild(dup);
+        }
+
+    } catch (err) {
+        output.innerHTML = "<p class='error'>Error connecting to API</p>";
+    }
+}
+</script>
+
+</body>
+</html>
